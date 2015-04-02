@@ -21,13 +21,13 @@ public class myDBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + COLUMN_PRODUCTNAME + " TEXT );";
+        String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PRODUCTNAME + " TEXT );";
         db.execSQL(query);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS + ";");
         onCreate(db);
     }
 
@@ -64,6 +64,7 @@ public class myDBHandler extends SQLiteOpenHelper {
                 dbString += c.getString(c.getColumnIndex("productname"));
                 dbString += "\n";
             }
+            c.moveToNext();
         }
         db.close();
         return dbString;
