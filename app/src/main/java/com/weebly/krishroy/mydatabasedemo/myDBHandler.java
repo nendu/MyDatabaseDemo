@@ -15,13 +15,16 @@ public class myDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_PRODUCTNAME = "productname";
 
-    public myDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public myDBHandler(Context context, String name,
+                       SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PRODUCTNAME + " TEXT );";
+        String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_PRODUCTNAME + " TEXT );";
         db.execSQL(query);
     }
 
@@ -33,11 +36,29 @@ public class myDBHandler extends SQLiteOpenHelper {
 
     //Add new row to table
     public void addProduct(Products p){
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_PRODUCTNAME, p.get_productName());
-
         SQLiteDatabase db = getWritableDatabase();
-        db.insert(TABLE_PRODUCTS, null, values);
+
+        String productname = p.get_productName();
+
+        String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " +
+                COLUMN_PRODUCTNAME + "=\"" + productname + "\";";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        if(c.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PRODUCTNAME, productname);
+
+            db.insert(TABLE_PRODUCTS, null, values);
+        }
+
+
+
+
+
+
+
 
         db.close();
     }
@@ -46,7 +67,8 @@ public class myDBHandler extends SQLiteOpenHelper {
     public void deleteProduct(String productName){
         SQLiteDatabase db = getWritableDatabase();
 
-        db.execSQL("DELETE FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_PRODUCTNAME + "=\"" + productName + "\";");
+        db.execSQL("DELETE FROM " + TABLE_PRODUCTS + " WHERE " +
+                COLUMN_PRODUCTNAME + "=\"" + productName + "\";");
     }
 
     //toString method
