@@ -1,11 +1,22 @@
 package com.weebly.krishroy.mydatabasedemo;
 
+
+//**************************************
+// http://www.mysamplecode.com/2012/07/android-listview-checkbox-example.html
+//**************************************
+
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+//
 
 
 public class MainActivity extends ActionBarActivity {
@@ -13,7 +24,8 @@ public class MainActivity extends ActionBarActivity {
     EditText inputEditText;
     TextView productsTextView;
     myDBHandler mDBHandler;
-    ListView mItemListview;
+    ListView myListView;
+    CheckBox mCheckbox;
 
 
     @Override
@@ -23,16 +35,26 @@ public class MainActivity extends ActionBarActivity {
 
         inputEditText = (EditText) findViewById(R.id.inputField);
         productsTextView = (TextView) findViewById(R.id.displayTextView);
+        myListView = (ListView) findViewById(R.id.listView_items);
+        mCheckbox = (CheckBox) findViewById(R.id.CustomListItemCheckBox);
+
+
 
         mDBHandler = new myDBHandler(this, null, null, 1);
 
-        //mItemListview = (ListView) findViewById(R.id.itemsListView);
-        String[] arr = {"abc", "def", "ghi"};
-        //ListAdapter adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arr);
-        //mItemListview.setAdapter(adapter1);
-
-
         printDatabase();
+
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               String temp = (String) myListView.getItemAtPosition(position);
+               Toast.makeText(getApplicationContext(), "Deleting " + temp, Toast.LENGTH_SHORT).show();
+               mDBHandler.deleteProduct(temp);
+               printDatabase();
+            }
+        });
+
+
 
 
 
@@ -42,14 +64,18 @@ public class MainActivity extends ActionBarActivity {
         String dbString = mDBHandler.databaseToString();
         String[] arrayOfItems = dbString.split("\\n");
 
-        //itemListview.setAdapter(itemListAdapter);
+        ListAdapter myAdapter = new CustomListAdapter(this, arrayOfItems);
+        //ListAdapter myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayOfItems);
+        myListView.setAdapter(myAdapter);
         productsTextView.setText(dbString);
         inputEditText.setText("");
     }
 
     public void addButtonClicked(View view){
         Products p = new Products(inputEditText.getText().toString());
-        mDBHandler.addProduct(p);
+        if(!mDBHandler.addProduct(p)){
+            Toast.makeText(getApplicationContext(), "Item already exists", Toast.LENGTH_SHORT).show();
+        };
         printDatabase();
     }
 
@@ -58,5 +84,6 @@ public class MainActivity extends ActionBarActivity {
         mDBHandler.deleteProduct(toBeDeleted);
         printDatabase();
     }
+
 
 }
