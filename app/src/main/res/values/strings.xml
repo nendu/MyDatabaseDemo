@@ -3,4 +3,11 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="storenames_array">
+        <item>Other Store</item>
+        <item>Sams</item>
+        <item>Publix</item>
+        <item>Walmart</item>
+    </string-array>
 </resources>

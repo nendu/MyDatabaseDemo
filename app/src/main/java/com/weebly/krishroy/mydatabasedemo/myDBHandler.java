@@ -14,6 +14,7 @@ public class myDBHandler extends SQLiteOpenHelper {
     public static final String TABLE_PRODUCTS = "myProducts";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_PRODUCTNAME = "productname";
+    public static final String COLUMN_STORENAME = "storename";
 
     public myDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -21,7 +22,8 @@ public class myDBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PRODUCTNAME + " TEXT );";
+        String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PRODUCTNAME + " TEXT, " + COLUMN_STORENAME + " TEXT );";
+        //String query = "CREATE TABLE " + TABLE_PRODUCTS + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_PRODUCTNAME + " TEXT );";
         db.execSQL(query);
     }
 
@@ -45,6 +47,7 @@ public class myDBHandler extends SQLiteOpenHelper {
         if(c.getCount()==0) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_PRODUCTNAME, p.get_productName());
+            values.put(COLUMN_STORENAME, p.getStoreName());
 
             db.insert(TABLE_PRODUCTS, null, values);
             db.close();
@@ -71,7 +74,8 @@ public class myDBHandler extends SQLiteOpenHelper {
         String dbString = "";
         SQLiteDatabase db = getWritableDatabase();
 
-        String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE 1;";
+        //String query = "SELECT "+ COLUMN_PRODUCTNAME +" FROM " + TABLE_PRODUCTS + " WHERE 1;";
+        String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE 1 GROUP BY productname;";
 
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();
@@ -79,6 +83,8 @@ public class myDBHandler extends SQLiteOpenHelper {
         while(!c.isAfterLast()){
             if(c.getString(c.getColumnIndex("productname")) != null) {
                 dbString += c.getString(c.getColumnIndex("productname"));
+                dbString += " - ";
+                dbString += c.getString(c.getColumnIndex("storename"));
                 dbString += "\n";
             }
             c.moveToNext();

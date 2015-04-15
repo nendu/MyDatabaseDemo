@@ -48,4 +48,11 @@
         android:layout_below="@+id/displayTextView"
         android:id="@+id/listView_items"
         android:clickable="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_below="@+id/inputField"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
